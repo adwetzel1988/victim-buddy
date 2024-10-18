@@ -3,8 +3,8 @@
 --
 -- https://tableplus.com/
 --
--- Database: file-complaint
--- Generation Time: 2024-10-17 01:19:46.9490
+-- Database: track-case
+-- Generation Time: 2024-10-19 00:12:41.9700
 -- -------------------------------------------------------------
 
 
@@ -29,14 +29,14 @@ CREATE TABLE `attachments` (
   PRIMARY KEY (`id`),
   KEY `attachments_complaint_id_foreign` (`complaint_id`),
   CONSTRAINT `attachments_complaint_id_foreign` FOREIGN KEY (`complaint_id`) REFERENCES `complaints` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `cities`;
 CREATE TABLE `cities` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `state_id` bigint unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -53,20 +53,23 @@ CREATE TABLE `complaints` (
   `incident_date` datetime NOT NULL,
   `complaint_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `signature` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` enum('pending','in_progress','under_review','completed','submitted') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `outcome` enum('founded','unfounded','exonerated','not sustained','sustained','other sustained misconduct') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `action_taken` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `assigned_to` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `court_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `victim_id` bigint unsigned NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `complaints_complaint_number_unique` (`complaint_number`),
   KEY `complaints_user_id_foreign` (`user_id`),
   KEY `complaints_assigned_to_foreign` (`assigned_to`),
+  KEY `complaints_victim_id_foreign` (`victim_id`),
   CONSTRAINT `complaints_assigned_to_foreign` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `complaints_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `complaints_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `complaints_victim_id_foreign` FOREIGN KEY (`victim_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `failed_jobs`;
 CREATE TABLE `failed_jobs` (
@@ -102,7 +105,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `note_attachments`;
 CREATE TABLE `note_attachments` (
@@ -115,7 +118,7 @@ CREATE TABLE `note_attachments` (
   PRIMARY KEY (`id`),
   KEY `note_attachments_note_id_foreign` (`note_id`),
   CONSTRAINT `note_attachments_note_id_foreign` FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
@@ -175,8 +178,8 @@ CREATE TABLE `personal_access_tokens` (
 DROP TABLE IF EXISTS `states`;
 CREATE TABLE `states` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abbreviation` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abbreviation` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -199,7 +202,7 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `witnesses`;
 CREATE TABLE `witnesses` (
@@ -213,7 +216,10 @@ CREATE TABLE `witnesses` (
   PRIMARY KEY (`id`),
   KEY `witnesses_complaint_id_foreign` (`complaint_id`),
   CONSTRAINT `witnesses_complaint_id_foreign` FOREIGN KEY (`complaint_id`) REFERENCES `complaints` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `attachments` (`id`, `complaint_id`, `file_path`, `file_name`, `created_at`, `updated_at`) VALUES
+(1, 1, 'public/xwL7F6RIPONB71Pb48CASNMnVpDokBO60qFwOOZT.pdf', '1-H-28p.pdf', '2024-10-18 15:43:42', '2024-10-18 15:43:42');
 
 INSERT INTO `cities` (`id`, `state_id`, `name`, `slug`, `created_at`, `updated_at`) VALUES
 (1, 1, 'Adak', 'adak', NULL, NULL),
@@ -44990,16 +44996,8 @@ INSERT INTO `cities` (`id`, `state_id`, `name`, `slug`, `created_at`, `updated_a
 (44594, 51, 'Yoder', 'yoder', NULL, NULL),
 (44595, 51, 'Y-O Ranch', 'y-o-ranch', NULL, NULL);
 
-INSERT INTO `complaints` (`id`, `user_id`, `complaint_number`, `description`, `incident_date`, `complaint_type`, `signature`, `status`, `outcome`, `action_taken`, `assigned_to`, `created_at`, `updated_at`, `court_name`) VALUES
-(1, 2, 'C-kkLNP3JP', 'test', '2024-10-16 16:34:00', 'City Planning', NULL, 'completed', NULL, 'test', 3, '2024-10-16 08:35:44', '2024-10-16 09:03:23', NULL),
-(2, NULL, 'C-pw4kV4t9', 'wtf', '2024-10-16 23:24:00', 'Robbery', NULL, 'pending', NULL, NULL, NULL, '2024-10-16 15:24:25', '2024-10-16 15:24:25', NULL),
-(3, 2, 'C-Jdd9mfiT', 'wtf', '2024-10-16 23:26:00', 'Robbery', NULL, 'pending', NULL, NULL, NULL, '2024-10-16 15:27:04', '2024-10-16 15:27:04', NULL),
-(4, 2, 'C-STARbRJ6', 'wtf', '2024-10-16 23:26:00', 'Robbery', NULL, 'completed', NULL, NULL, NULL, '2024-10-16 15:27:15', '2024-10-16 15:27:15', NULL),
-(5, NULL, 'C-su3f6f5H', 'test', '2024-10-17 01:03:00', NULL, NULL, 'pending', NULL, NULL, NULL, '2024-10-16 17:03:58', '2024-10-16 17:03:58', NULL),
-(6, 13, 'C-uR6vQgRx', 'test', '2024-10-17 01:03:00', NULL, NULL, 'pending', NULL, NULL, NULL, '2024-10-16 17:04:15', '2024-10-16 17:04:15', NULL),
-(7, 14, 'C-yTHhDGaX', 'test', '2024-10-17 01:08:00', NULL, NULL, 'pending', NULL, NULL, NULL, '2024-10-16 17:08:48', '2024-10-16 17:08:48', NULL),
-(8, 15, 'C-V5VwvGgl', 'court_name', '2024-10-17 01:11:00', NULL, NULL, 'pending', NULL, NULL, NULL, '2024-10-16 17:11:19', '2024-10-16 17:11:19', NULL),
-(9, 16, 'C-PC5o7eGX', 'court_name', '2024-10-17 01:11:00', NULL, NULL, 'completed', NULL, NULL, NULL, '2024-10-16 17:11:58', '2024-10-16 17:11:58', 'court_name');
+INSERT INTO `complaints` (`id`, `user_id`, `complaint_number`, `description`, `incident_date`, `complaint_type`, `signature`, `status`, `outcome`, `action_taken`, `assigned_to`, `created_at`, `updated_at`, `court_name`, `victim_id`) VALUES
+(1, 2, 'C-GkikMSvv', 'case', '2024-10-18 15:44:00', NULL, NULL, 'test', NULL, NULL, NULL, '2024-10-18 07:45:11', '2024-10-18 14:26:47', 'Basketball', 25);
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (2, '2014_10_12_100000_create_password_reset_tokens_table', 1),
@@ -45022,15 +45020,12 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (29, '2024_10_16_030358_create_states_table', 14),
 (30, '2024_10_16_030403_create_cities_table', 14),
 (32, '2024_10_16_082528_add_city_id_on_complaints_table', 15),
-(34, '2024_10_16_164410_add_court_name_to_complaints_table', 16);
-
-INSERT INTO `note_attachments` (`id`, `file_path`, `file_name`, `note_id`, `created_at`, `updated_at`) VALUES
-(1, 'public/aScTwTfgDtZWQCz2EI0DkowT0dchY8NOOOGnhDho.pdf', '6-H-28p.pdf', 6, '2024-10-13 19:07:25', '2024-10-13 19:07:25'),
-(2, 'public/fPjqZCxApbpmczAmT3DBYVYPslHVqYGWLcDavQ2z.jpg', '6-download.jpg', 6, '2024-10-13 19:07:25', '2024-10-13 19:07:25'),
-(3, 'public/pgcdouL9zFxkc8LvMyk9eFi7oS7xr3eQ6vyyvq2h.pdf', '7-H-28p.pdf', 7, '2024-10-13 22:19:14', '2024-10-13 22:19:14');
+(35, '2024_10_16_164410_add_court_name_to_complaints_table', 16),
+(39, '2024_10_18_073602_add_victim_id_to_complaints_table', 17),
+(42, '2024_10_18_142356_convert_status_to_string_type_from_complaints_table', 18);
 
 INSERT INTO `officers` (`id`, `complaint_id`, `name`, `rank`, `division`, `badge_number`, `created_at`, `updated_at`) VALUES
-(1, 4, 'wtf', NULL, 'wtf', NULL, '2024-10-16 15:27:15', '2024-10-16 15:27:15');
+(1, 1, 'defendant 1', NULL, NULL, 'case', '2024-10-18 07:45:11', '2024-10-18 07:45:11');
 
 INSERT INTO `states` (`id`, `name`, `abbreviation`, `created_at`, `updated_at`) VALUES
 (1, 'Alaska', 'AK', NULL, NULL),
@@ -45086,20 +45081,32 @@ INSERT INTO `states` (`id`, `name`, `abbreviation`, `created_at`, `updated_at`) 
 (51, 'Wyoming', 'WY', NULL, NULL);
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `address`, `city`, `state`, `zip`, `phone`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Joe Reporter', 'jschmoe@test.com', '$2y$12$cpEW4MDUTnUr4DtVfisJwu4VqKAs5JEjrDfEmezHPFRr76X9FCISa', NULL, NULL, NULL, NULL, '5555551212', 'user', NULL, '2024-10-10 21:57:20', '2024-10-13 22:13:02'),
-(2, 'Matthew', 'openwestlabs@gmail.com', '$2y$12$eZNbOz880ui3FOf3XElOt./gS9XBNw5BdADFJfFuIHQO2mfUKgXsK', NULL, NULL, NULL, NULL, NULL, 'admin', NULL, '2024-10-10 22:01:26', '2024-10-13 20:42:17'),
-(3, 'Sub Admin', 'subadmin@test.com', '$2y$12$IiNKWsuKNxdns.PNHq5/8Ox2p3rM9cVGBz1yqmTYqWzFdxbVM0Gbi', NULL, NULL, NULL, NULL, NULL, 'subadmin', NULL, '2024-10-12 04:05:16', '2024-10-12 04:05:16'),
-(4, 'Matthew Summers', 'openwestlabs+test1@gmail.com', '$2y$12$yFM/DNl15cEIQfw52n3kqujvDuHkaM9EHvLwrE9Pcdjc6qhPh8uqK', NULL, NULL, NULL, NULL, NULL, 'user', NULL, '2024-10-13 07:34:44', '2024-10-13 07:34:44'),
-(6, 'test1', 'test1@test1.com', '$2y$12$WXzdMbJY4pPilhl7i1ZRYOYkrdHadgoBKi2xfRCgXfO1KgMfyuPK6', 'test1', 'test1', 'test1', '2200', NULL, 'user', NULL, '2024-10-13 18:37:48', '2024-10-13 18:37:48'),
-(7, 'test2 test2', 'test2@test2.com', '$2y$12$NR/vWMHObo/cr00XpROxbOHrlMz0FUFA8RDIcfVBs9WtNB49E42xy', 'test2', 'test2', 'test2', '1111', '123', 'user', NULL, '2024-10-13 18:44:35', '2024-10-13 18:44:35'),
-(8, 'Andrew Wetzel', 'adwetzel1988@gmail.com', '$2y$12$snDn5aFjgZ3LjQtzW83qcuSmI4wsDQ8U5yISQSG8y2/OGL89zgxQS', '70366 Petit Road', 'mandeville', 'LA', '70424', '9856418978', 'user', NULL, '2024-10-14 07:18:01', '2024-10-14 07:18:01'),
-(9, 'test test', 'test123@test.com', '$2y$12$Z21IpXA3Wz9JGEOQugs7ye6pVj9J0.vmyyakeHDPSxw6cioZ6ZCoW', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-16 17:00:39', '2024-10-16 17:00:39'),
-(10, 'test test', 'test10@test.com', '$2y$12$QxoNUbXKniQJ72MP8X2g7OV8xsnqSEDl0BN1U/QkFquv3yEBOHx.2', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-16 17:01:50', '2024-10-16 17:01:50'),
-(11, 'test test', 'test11@test.com', '$2y$12$IGiCSC2JpDTdMRysgG0crui67zvWbnypTYe02.gnA6FpNNEkM8n3G', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-16 17:02:29', '2024-10-16 17:02:29'),
-(13, 'test test', 'test12@test.com', '$2y$12$hQVhM21ujI8tCSXURC7BcOYwEz33b9HktrCXsCILpVNhQI2EjQwtq', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-16 17:04:15', '2024-10-16 17:04:15'),
-(14, 'test test', 'testtesttesttest@test.com', '$2y$12$qvQwBbeqEbsnO3Ck91WnGuNad.zappfJIbt/SF/WiR.HQ25NakZle', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-16 17:08:48', '2024-10-16 17:08:48'),
-(15, 'court_name court_name', 'court_name@court.com', '$2y$12$1wHLvitPJBey5IOW15rXo..fecw0R43/GdmKz9wvK2XRkSsV.VtQ6', 'court_name', 'court_name', 'court_name', 'court_name', 'court_name', 'user', NULL, '2024-10-16 17:11:19', '2024-10-16 17:11:19'),
-(16, 'joh sub', 'court_namecourt_name@aw.c', '$2y$12$HK3L/.WyuIhf1xEbU7Wkcu.HbUdrt5SzcB38OxNfA1QKT/DO8BNEC', 'court_name', 'court_name', 'court_name', 'court_name', 'court_name', 'user', NULL, '2024-10-16 17:11:58', '2024-10-16 17:11:58');
+(1, 'Joe Reporter', 'jschmoe@test.com', '$2y$12$cpEW4MDUTnUr4DtVfisJwu4VqKAs5JEjrDfEmezHPFRr76X9FCISa', NULL, NULL, NULL, NULL, '5555551212', 'user', NULL, '2024-10-11 05:57:20', '2024-10-14 06:13:02'),
+(2, 'Matthew', 'openwestlabs@gmail.com', '$2y$12$eZNbOz880ui3FOf3XElOt./gS9XBNw5BdADFJfFuIHQO2mfUKgXsK', NULL, NULL, NULL, NULL, NULL, 'admin', NULL, '2024-10-11 06:01:26', '2024-10-14 04:42:17'),
+(3, 'Sub Admin', 'subadmin@test.com', '$2y$12$IiNKWsuKNxdns.PNHq5/8Ox2p3rM9cVGBz1yqmTYqWzFdxbVM0Gbi', NULL, NULL, NULL, NULL, NULL, 'subadmin', NULL, '2024-10-12 12:05:16', '2024-10-12 12:05:16'),
+(4, 'Matthew Summers', 'openwestlabs+test1@gmail.com', '$2y$12$yFM/DNl15cEIQfw52n3kqujvDuHkaM9EHvLwrE9Pcdjc6qhPh8uqK', NULL, NULL, NULL, NULL, NULL, 'user', NULL, '2024-10-13 15:34:44', '2024-10-13 15:34:44'),
+(6, 'test1', 'test1@test1.com', '$2y$12$WXzdMbJY4pPilhl7i1ZRYOYkrdHadgoBKi2xfRCgXfO1KgMfyuPK6', 'test1', 'test1', 'test1', '2200', NULL, 'user', NULL, '2024-10-14 02:37:48', '2024-10-14 02:37:48'),
+(7, 'test2 test2', 'test2@test2.com', '$2y$12$NR/vWMHObo/cr00XpROxbOHrlMz0FUFA8RDIcfVBs9WtNB49E42xy', 'test2', 'test2', 'test2', '1111', '123', 'user', NULL, '2024-10-14 02:44:35', '2024-10-14 02:44:35'),
+(8, 'Andrew Wetzel', 'adwetzel1988@gmail.com', '$2y$12$snDn5aFjgZ3LjQtzW83qcuSmI4wsDQ8U5yISQSG8y2/OGL89zgxQS', '70366 Petit Road', 'mandeville', 'LA', '70424', '9856418978', 'user', NULL, '2024-10-14 15:18:01', '2024-10-14 15:18:01'),
+(9, 'test test', 'test123@test.com', '$2y$12$Z21IpXA3Wz9JGEOQugs7ye6pVj9J0.vmyyakeHDPSxw6cioZ6ZCoW', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-17 01:00:39', '2024-10-17 01:00:39'),
+(10, 'test test', 'test10@test.com', '$2y$12$QxoNUbXKniQJ72MP8X2g7OV8xsnqSEDl0BN1U/QkFquv3yEBOHx.2', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-17 01:01:50', '2024-10-17 01:01:50'),
+(11, 'test test', 'test11@test.com', '$2y$12$IGiCSC2JpDTdMRysgG0crui67zvWbnypTYe02.gnA6FpNNEkM8n3G', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-17 01:02:29', '2024-10-17 01:02:29'),
+(13, 'test test', 'test12@test.com', '$2y$12$hQVhM21ujI8tCSXURC7BcOYwEz33b9HktrCXsCILpVNhQI2EjQwtq', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-17 01:04:15', '2024-10-17 01:04:15'),
+(14, 'test test', 'testtesttesttest@test.com', '$2y$12$qvQwBbeqEbsnO3Ck91WnGuNad.zappfJIbt/SF/WiR.HQ25NakZle', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-17 01:08:48', '2024-10-17 01:08:48'),
+(15, 'court_name court_name', 'court_name@court.com', '$2y$12$1wHLvitPJBey5IOW15rXo..fecw0R43/GdmKz9wvK2XRkSsV.VtQ6', 'court_name', 'court_name', 'court_name', 'court_name', 'court_name', 'user', NULL, '2024-10-17 01:11:19', '2024-10-17 01:11:19'),
+(16, 'joh sub', 'court_namecourt_name@aw.c', '$2y$12$HK3L/.WyuIhf1xEbU7Wkcu.HbUdrt5SzcB38OxNfA1QKT/DO8BNEC', 'court_name', 'court_name', 'court_name', 'court_name', 'court_name', 'user', NULL, '2024-10-17 01:11:58', '2024-10-17 01:11:58'),
+(17, 'test', 'test@test.com', '$2y$12$Aq75u3t.lBkvJPZbTzQTLuLjB7It6FqnI/pEBJAzuHKdxIaDQs0fO', NULL, NULL, NULL, NULL, NULL, 'user', NULL, '2024-10-17 16:07:17', '2024-10-17 16:07:17'),
+(18, 'test last', 'test@email.com', '$2y$12$BnB4/4ty0PTwdnqolkKKZeCD3b7biMQ8QuF4IQkn4UE1Mc5SXwa/G', 'test', 'test', 'test', 'test', '1', 'user', NULL, '2024-10-18 02:55:03', '2024-10-18 02:55:03'),
+(19, 'test last', 'test123@email.com', '$2y$12$TK9brOqdZ5/fk5XaPOHNeuyk8YtC.t6ZDVC8y4HwOIY8fEsWHJnB6', 'test', 'test', 'test', 'test', '1', 'user', NULL, '2024-10-18 02:55:50', '2024-10-18 02:55:50'),
+(20, 'test test', 'testtesttest@testtest.com', '$2y$12$mGb5TdAZs.Gkr/cdf0ayPeGW9GPgZIE2rimWqBazOvBsfW4NIm/Ym', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-18 03:56:09', '2024-10-18 03:56:09'),
+(21, 'test test', 'testtesttesttesttesttest@testtesttest.com', '$2y$12$ACCoi5rGOTR/CXwco43lBOBnrdhXMD6tI0dBEQ103PBHMfU0Tv32S', 'test', 'test', 'test', 'test', 'testtest', 'user', NULL, '2024-10-18 06:01:22', '2024-10-18 06:01:22'),
+(22, 'test test', 'test1test@test.com', '$2y$12$h6d4q/kVZwQ.38sHx8lIp.YRERJ8jt.gqrsTslKyP4q23g12kNOfi', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-18 07:12:57', '2024-10-18 07:12:57'),
+(23, 'john eod', 'email@email.com', '$2y$12$OVXwuOqlwiVvlksiuH4Ds.Z0By6E9jFG204QAI.rwexnC8GKrxWMa', 'test', 'test', 'test', 'test', '123', 'user', NULL, '2024-10-18 07:40:20', '2024-10-18 07:40:20'),
+(24, 'john eod', 'email1@email.com', '$2y$12$c5kEDjE9ChZ1ziVfADy8BeqJ9KZL.efq0Le0THcjm9u4FIgGYDR2.', 'test', 'test', 'test', 'test', '123', 'user', NULL, '2024-10-18 07:41:37', '2024-10-18 07:41:37'),
+(25, 'case casecase', 'case@case.com', '$2y$12$QKLwvcBZ9GQPjBYvWd.0y.lYLmShmiCH/OCnhL5gJWVIwJos7JhZm', 'case', 'case', 'case', 'case', 'case', 'user', NULL, '2024-10-18 07:45:11', '2024-10-18 07:45:11');
+
+INSERT INTO `witnesses` (`id`, `complaint_id`, `name`, `contact`, `email`, `created_at`, `updated_at`) VALUES
+(1, 1, 'barathrum', '322', NULL, '2024-10-18 07:45:11', '2024-10-18 07:45:11');
 
 
 
