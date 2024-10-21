@@ -28,8 +28,8 @@ class ComplaintUpdated extends Notification
 
         return (new MailMessage)
             ->subject('Case Status Update')
-            ->line('The status of your reported concern has been updated to: ' . Str::headline($status) . '.')
-            ->line('Please click the button below to view the updated report.')
-            ->action('View Report', route('complaints.show', $this->complaint));
+            ->line('The status of your case has been updated to: ' . Str::headline($status) . '.')
+            ->line('Please click the button below to view the updated case.')
+            ->action('View Case', route('complaints.show', $this->complaint));
     }
 }

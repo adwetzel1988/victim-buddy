@@ -71,12 +71,17 @@
                         <div class="card-body">
                             <h5 class="card-title">Defendant Information</h5>
                             <div class="mb-3">
-                                <label for="first_name" class="form-label">Name</label>
+                                <label for="officer_name" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="officer_name" name="officer_name" value="{{ old('officer_name') }}" required>
                             </div>
+                            <!-- Added status box -->
                             <div class="mb-3">
-                                <label for="first_name" class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" id="officer_badge_number" name="officer_badge_number" value="{{ old('officer_badge_number') }}" required>
+                                <label for="defendant_status" class="form-label">Status</label>
+                                <select class="form-control" id="defendant_status" name="defendant_status">
+                                    <option value="in_jail">In Jail</option>
+                                    <option value="on_bond">On Bond</option>
+                                    <option value="unknown">Unknown</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -89,12 +94,29 @@
                                 <textarea class="form-control" id="description" name="description" rows="5" required>{{ old('description') }}</textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="incident_date" class="form-label">Filing Date</label>
+                                <label for="incident_date" class="form-label">Offense Date</label>
                                 <input type="datetime-local" class="form-control" id="incident_date" name="incident_date" value="{{ old('incident_date') }}" required>
                             </div>
                             <div class="mb-3">
-                                <label for="court_name" class="form-label">Court Name</label>
+                                <label for="court_name" class="form-label">Court</label>
                                 <input type="text" class="form-control" id="court_name" name="court_name" value="{{ old('court_name') }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="judge_name" class="form-label">Judge</label>
+                                <input type="text" class="form-control" id="judge_name" name="judge_name" value="{{ old('judge_name') }}">
+                            </div>
+                            <h5 class="card-title mt-5">Prosecutor Information</h5>
+                            <div class="mb-3">
+                                <label for="prosecutor_name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="prosecutor_name" name="prosecutor_name" value="{{ old('prosecutor_name') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="prosecutor_number" class="form-label">Number</label>
+                                <input type="tel" class="form-control" id="prosecutor_number" name="prosecutor_number" value="{{ old('prosecutor_number') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="prosecutor_email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="prosecutor_email" name="prosecutor_email" value="{{ old('prosecutor_email') }}">
                             </div>
                         </div>
                     </div>

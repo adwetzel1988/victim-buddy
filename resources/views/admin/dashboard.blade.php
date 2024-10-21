@@ -16,38 +16,38 @@
             <a href="{{ route('admin.complaints.index') }}" class="card-link">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Total Reports</h5>
+                        <h5 class="card-title">Total Cases</h5>
                         <p class="card-text">{{ $stats['total'] }}</p>
                     </div>
                 </div>
             </a>
         </div>
         <div class="col-md-3">
-            <a href="{{ route('admin.complaints.index', ['status' => 'pending']) }}" class="card-link">
+            <a href="{{ route('admin.complaints.index', ['status' => 'screening']) }}" class="card-link">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Pending Reports</h5>
-                        <p class="card-text">{{ $stats['pending'] }}</p>
+                        <h5 class="card-title">Screening Cases</h5>
+                        <p class="card-text">{{ $stats['screening'] }}</p>
                     </div>
                 </div>
             </a>
         </div>
         <div class="col-md-3">
-            <a href="{{ route('admin.complaints.index', ['status' => 'in_progress']) }}" class="card-link">
+            <a href="{{ route('admin.complaints.index', ['status' => 'arraignment']) }}" class="card-link">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">In Progress Reports</h5>
-                        <p class="card-text">{{ $stats['in_progress'] }}</p>
+                        <h5 class="card-title">Arraignment Cases</h5>
+                        <p class="card-text">{{ $stats['arraignment'] }}</p>
                     </div>
                 </div>
             </a>
         </div>
         <div class="col-md-3">
-            <a href="{{ route('admin.complaints.index', ['status' => 'submitted']) }}" class="card-link">
+            <a href="{{ route('admin.complaints.index', ['status' => 'pre_trial']) }}" class="card-link">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Submitted Reports</h5>
-                        <p class="card-text">{{ $stats['submitted'] }}</p>
+                        <h5 class="card-title">Pre-Trial Cases</h5>
+                        <p class="card-text">{{ $stats['pre_trial'] }}</p>
                     </div>
                 </div>
             </a>
@@ -55,18 +55,38 @@
     </div>
     <div class="row mt-4">
         <div class="col-md-3">
-            <a href="{{ route('admin.complaints.index', ['status' => 'completed']) }}" class="card-link">
+            <a href="{{ route('admin.complaints.index', ['status' => 'trial']) }}" class="card-link">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Completed Reports</h5>
-                        <p class="card-text">{{ $stats['completed'] }}</p>
+                        <h5 class="card-title">Trial Cases</h5>
+                        <p class="card-text">{{ $stats['trial'] }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ route('admin.complaints.index', ['status' => 'sentencing']) }}" class="card-link">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Sentencing Cases</h5>
+                        <p class="card-text">{{ $stats['sentencing'] }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ route('admin.complaints.index', ['status' => 'closed']) }}" class="card-link">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Closed Cases</h5>
+                        <p class="card-text">{{ $stats['closed'] }}</p>
                     </div>
                 </div>
             </a>
         </div>
     </div>
     <div class="mt-4">
-        <a href="{{ route('admin.complaints.index') }}" class="btn btn-primary">View All Reports</a>
+        <a href="{{ route('admin.complaints.index') }}" class="btn btn-primary">View All Cases</a>
     </div>
 
     <div class="mt-4">

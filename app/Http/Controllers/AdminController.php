@@ -19,10 +19,12 @@ class AdminController extends Controller
         $complaints = Complaint::all();
         $stats = [
             'total' => $complaints->count(),
-            'pending' => $complaints->where('status', 'pending')->count(),
-            'in_progress' => $complaints->where('status', 'in_progress')->count(),
-            'submitted' => $complaints->where('status', 'submitted')->count(),
-            'completed' => $complaints->where('status', 'completed')->count(),
+            'screening' => $complaints->where('status', 'screening')->count(),
+            'arraignment' => $complaints->where('status', 'arraignment')->count(),
+            'pre_trial' => $complaints->where('status', 'pre_trial')->count(),
+            'trial' => $complaints->where('status', 'trial')->count(),
+            'sentencing' => $complaints->where('status', 'sentencing')->count(),
+            'closed' => $complaints->where('status', 'closed')->count(),
         ];
 
         $latestMessages = Message::latest()->take(5)->get();
@@ -74,12 +76,12 @@ class AdminController extends Controller
     public function updateStatus(Request $request, Complaint $complaint)
     {
         $validatedData = $request->validate([
-            'status' => 'required|in:pending,in_progress,submitted,under_review,completed,other',
+            'status' => 'required|in:screening,arraignment,pre_trial,trial,sentencing,closed',
             'action_taken' => 'required_if:status,other|nullable|string|max:1000',
         ]);
 
-        if ($complaint->status === 'completed') {
-            return redirect()->back()->with('error', 'Cannot update a completed complaint.');
+        if ($complaint->status === 'closed') {
+            return redirect()->back()->with('error', 'Cannot update a closed complaint.');
         }
 
         $status = $validatedData['status'] === 'other' ? $validatedData['action_taken'] : $validatedData['status'];

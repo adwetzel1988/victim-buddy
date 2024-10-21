@@ -52,12 +52,12 @@
             <tr>
                 <th>Docket Number</th>
                 <th>Charges</th>
-                <th>Created by</th>
+                <th>Judge</th>
                 <th>Court Name</th>
                 <th>Victim</th>
                 <th>Defendant</th>
                 <th>Status</th>
-                <th>Created at</th>
+                <th>Assigned to</th>
                 <th>Closed Date</th>
                 <th>Actions</th>
             </tr>
@@ -68,12 +68,12 @@
                 <tr>
                     <td>{{ $charges->contact }}</td>
                     <td>{{ $charges->name }}</td>
-                    <td>{{ $charges->complaint->user->name ?? 'Anonymous' }}</td>
+                    <td>{{ $charges->complaint->judge_name }}</td>
                     <td>{{ $charges->complaint->court_name ?? '' }}</td>
                     <td>{{ $charges->complaint->victim->name ?? '' }}</td>
                     <td>{{ $charges->complaint->officer->name ?? 'N/A' }}</td>
                     <td>{{ \Illuminate\Support\Str::headline($charges->complaint->status) }}</td>
-                    <td>{{ $charges->complaint->created_at }}</td>
+                    <td>{{ $charges->complaint->assignedTo?->name }}</td>
                     <td>
                         @if($charges->complaint->status === 'completed')
                             {{ $charges->complaint->updated_at }}

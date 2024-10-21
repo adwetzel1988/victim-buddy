@@ -19,13 +19,13 @@
                 <div class="row">
                     <div class="col-md-6">
                         <p class="card-text"><strong>Status:</strong> {{ \Illuminate\Support\Str::headline($complaint->status) }}</p>
-                        @if($complaint->status === 'completed')
+                        @if($complaint->status === 'closed')
                             <p class="card-text"><strong>Closed Date:</strong> {{ $complaint->updated_at }}</p>
                         @endif
                         <p class="card-text"><strong>Created By:</strong> {{ $complaint->user->name ?? 'Anonymous' }}</p>
-                        <p class="card-text"><strong>Court Name:</strong> {{ $complaint->court_name }}</p>
+                        <p class="card-text"><strong>Court:</strong> {{ $complaint->court_name }}</p>
                         @if(!is_null($complaint->assignedTo))
-                            <p class="card-text"><strong>Assigned to:</strong> {{ $complaint->assignedTo->name }}</p>
+                            <p class="card-text"><strong>Assigned Prosecutor:</strong> {{ $complaint->assignedTo->name }}</p>
                         @endif
                         <p class="card-text"><strong>Description:</strong> {{ $complaint->description }}</p>
                         <p class="card-text"><strong>Incident Date:</strong> {{ $complaint->incident_date }}</p>
@@ -35,8 +35,10 @@
                     </div>
                     <div class="col-md-6">
                         <h6 class="mt-4">Case Information</h6>
+                        <p class="card-text"><strong>Judge:</strong> {{ $complaint->judge_name }}</p>
                         <p class="card-text"><strong>Victim:</strong> {{ $complaint->victim->name ?? '' }}</p>
                         <p class="card-text"><strong>Defendant:</strong> {{ $complaint->officer->name ?? '' }}</p>
+                        <p class="card-text"><strong>Prosecutor:</strong> {{ $complaint->prosecutor_name }}</p>
                         <h6 class="mt-4">Charges</h6>
                         <table class="table">
                             <thead>
@@ -70,16 +72,16 @@
             </div>
         </div>
 
-        @if(auth()->user()->role == "admin" && $complaint->status !== 'completed')
+        @if(auth()->user()->role == "admin" && $complaint->status !== 'closed')
             <div class="card mb-4">
                 <div class="card-body">
                     <h2 class="card-title mb-3">Assign Case</h2>
                     <form action="{{ route('admin.complaints.assign', $complaint) }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label for="assigned_to" class="form-label">Assign to Subadmin</label>
+                            <label for="assigned_to" class="form-label">Assign to Prosecutor</label>
                             <select class="form-control" id="assigned_to" name="assigned_to" required>
-                                <option value="">Select Subadmin</option>
+                                <option value="">Select Prosecutor</option>
                                 @foreach($subadmins as $subadmin)
                                     <option value="{{ $subadmin->id }}" {{ $complaint->assigned_to == $subadmin->id ? 'selected' : '' }}>
                                         {{ $subadmin->name }}
@@ -93,7 +95,7 @@
             </div>
         @endif
 
-        @if($complaint->status !== 'completed')
+        @if($complaint->status !== 'closed')
             <div class="card mb-4">
                 <div class="card-body">
                     <h2 class="card-title mb-3">Update Status</h2>
@@ -102,23 +104,13 @@
                             @method('PATCH')
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
-                                <select class="form-control" id="status" name="status" required {{ $complaint->status === 'completed' ? 'disabled' : '' }}>
-                                    <option value="pending" {{ $complaint->status === 'pending' ? 'selected' : '' }}>Pending
-                                    </option>
-                                    <option value="in_progress" {{ $complaint->status === 'in_progress' ? 'selected' : '' }}>In
-                                        Progress
-                                    </option>
-                                    <option value="submitted" {{ $complaint->status === 'submitted' ? 'selected' : '' }}>Submitted
-                                    </option>
-                                    <option value="under_review" {{ $complaint->status === 'under_review' ? 'selected' : '' }}>
-                                        Under Review
-                                    </option>
-                                    <option value="completed" {{ $complaint->status === 'completed' ? 'selected' : '' }}>
-                                        Completed
-                                    </option>
-                                    <option value="other" {{ !in_array($complaint->status, ['pending', 'in_progress', 'submitted', 'under_review', 'completed']) ? 'selected' : '' }}>
-                                        Other
-                                    </option>
+                                <select class="form-control" id="status" name="status" required {{ $complaint->status === 'closed' ? 'disabled' : '' }}>
+                                    <option value="screening" {{ $complaint->status === 'screening' ? 'selected' : '' }}>Screening</option>
+                                    <option value="arraignment" {{ $complaint->status === 'arraignment' ? 'selected' : '' }}>Arraignment</option>
+                                    <option value="pre_trial" {{ $complaint->status === 'pre_trial' ? 'selected' : '' }}>Pre-trial</option>
+                                    <option value="trial" {{ $complaint->status === 'trial' ? 'selected' : '' }}>Trial</option>
+                                    <option value="sentencing" {{ $complaint->status === 'sentencing' ? 'selected' : '' }}>Sentencing</option>
+                                    <option value="closed" {{ $complaint->status === 'closed' ? 'selected' : '' }}>Closed</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary">
@@ -152,7 +144,7 @@
                     </div>
                 @endforeach
 
-                @if($complaint->status !== 'completed')
+                @if($complaint->status !== 'closed')
                     <form action="{{ route('complaints.add-note', $complaint) }}" method="POST" class="mt-3" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
@@ -182,7 +174,7 @@
                     </div>
                 @endforeach
 
-                @if($complaint->status !== 'completed')
+                @if($complaint->status !== 'closed')
                     <form action="{{ route('messages.store', $complaint) }}" method="POST" class="mt-3">
                         @csrf
                         <div class="mb-3">
@@ -206,18 +198,7 @@
       var status = statusSelect.value;
       var actionTakenField = document.getElementById('actionTakenField');
 
-      if (!['pending', 'in_progress', 'submitted', 'under_review', 'completed'].includes(status)) {
-
-        if (!actionTakenField) {
-          actionTakenField = document.createElement('div');
-          actionTakenField.className = 'mb-3';
-          actionTakenField.id = 'actionTakenField';
-          actionTakenField.innerHTML = `
-                <label for="action_taken" class="form-label">Specify other</label>
-                <input class="form-control" id="action_taken" name="action_taken"" value="{{ $complaint->status }}" />
-            `;
-          form.insertBefore(actionTakenField, form.querySelector('button'));
-        }
+      if (!['pending', 'in_progress', 'submitted', 'under_review', 'closed'].includes(status)) {
       } else {
         if (actionTakenField) {
           actionTakenField.remove();
