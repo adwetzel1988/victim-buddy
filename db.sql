@@ -3,8 +3,8 @@
 --
 -- https://tableplus.com/
 --
--- Database: track-case
--- Generation Time: 2024-10-19 00:12:41.9700
+-- Database: victimbuddy
+-- Generation Time: 2024-10-22 00:10:49.3210
 -- -------------------------------------------------------------
 
 
@@ -53,14 +53,19 @@ CREATE TABLE `complaints` (
   `incident_date` datetime NOT NULL,
   `complaint_type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `signature` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `outcome` enum('founded','unfounded','exonerated','not sustained','sustained','other sustained misconduct') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `action_taken` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `assigned_to` bigint unsigned DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `court_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `court_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `victim_id` bigint unsigned NOT NULL,
+  `prosecutor_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prosecutor_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `prosecutor_email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `defendant_status` enum('in_jail','on_bond','unknown') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'unknown',
+  `judge_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `complaints_complaint_number_unique` (`complaint_number`),
   KEY `complaints_user_id_foreign` (`user_id`),
@@ -69,7 +74,7 @@ CREATE TABLE `complaints` (
   CONSTRAINT `complaints_assigned_to_foreign` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `complaints_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `complaints_victim_id_foreign` FOREIGN KEY (`victim_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `failed_jobs`;
 CREATE TABLE `failed_jobs` (
@@ -105,7 +110,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `note_attachments`;
 CREATE TABLE `note_attachments` (
@@ -148,7 +153,7 @@ CREATE TABLE `officers` (
   PRIMARY KEY (`id`),
   KEY `officers_complaint_id_foreign` (`complaint_id`),
   CONSTRAINT `officers_complaint_id_foreign` FOREIGN KEY (`complaint_id`) REFERENCES `complaints` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `password_reset_tokens`;
 CREATE TABLE `password_reset_tokens` (
@@ -202,7 +207,7 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `witnesses`;
 CREATE TABLE `witnesses` (
@@ -216,7 +221,7 @@ CREATE TABLE `witnesses` (
   PRIMARY KEY (`id`),
   KEY `witnesses_complaint_id_foreign` (`complaint_id`),
   CONSTRAINT `witnesses_complaint_id_foreign` FOREIGN KEY (`complaint_id`) REFERENCES `complaints` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `attachments` (`id`, `complaint_id`, `file_path`, `file_name`, `created_at`, `updated_at`) VALUES
 (1, 1, 'public/xwL7F6RIPONB71Pb48CASNMnVpDokBO60qFwOOZT.pdf', '1-H-28p.pdf', '2024-10-18 15:43:42', '2024-10-18 15:43:42');
@@ -44996,8 +45001,10 @@ INSERT INTO `cities` (`id`, `state_id`, `name`, `slug`, `created_at`, `updated_a
 (44594, 51, 'Yoder', 'yoder', NULL, NULL),
 (44595, 51, 'Y-O Ranch', 'y-o-ranch', NULL, NULL);
 
-INSERT INTO `complaints` (`id`, `user_id`, `complaint_number`, `description`, `incident_date`, `complaint_type`, `signature`, `status`, `outcome`, `action_taken`, `assigned_to`, `created_at`, `updated_at`, `court_name`, `victim_id`) VALUES
-(1, 2, 'C-GkikMSvv', 'case', '2024-10-18 15:44:00', NULL, NULL, 'test', NULL, NULL, NULL, '2024-10-18 07:45:11', '2024-10-18 14:26:47', 'Basketball', 25);
+INSERT INTO `complaints` (`id`, `user_id`, `complaint_number`, `description`, `incident_date`, `complaint_type`, `signature`, `status`, `outcome`, `action_taken`, `assigned_to`, `created_at`, `updated_at`, `court_name`, `victim_id`, `prosecutor_name`, `prosecutor_number`, `prosecutor_email`, `defendant_status`, `judge_name`) VALUES
+(1, 2, 'C-GkikMSvv', 'case', '2024-10-18 15:44:00', NULL, NULL, 'test', NULL, NULL, NULL, '2024-10-18 07:45:11', '2024-10-18 14:26:47', 'Basketball', 25, NULL, NULL, NULL, 'unknown', NULL),
+(2, 2, 'C-KaZeuVWx', 'Voluptatem aut labor', '1980-09-20 04:22:00', NULL, NULL, 'pending', NULL, NULL, NULL, '2024-10-21 07:06:35', '2024-10-21 07:06:35', 'Abdul Warren', 26, 'Amber Levy', '6853075241', 'fohana@mailinator.com', 'in_jail', 'Jescie Dejesus'),
+(3, 2, 'C-vSY9WBAS', 'Voluptatem aut labor', '1980-09-20 04:22:00', NULL, NULL, 'closed', NULL, NULL, 1, '2024-10-21 07:09:18', '2024-10-21 07:50:45', 'Abdul Warren', 27, 'Amber Levy', '6853075241', 'fohana@mailinator.com', 'in_jail', 'Jescie Dejesus');
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (2, '2014_10_12_100000_create_password_reset_tokens_table', 1),
@@ -45022,10 +45029,12 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (32, '2024_10_16_082528_add_city_id_on_complaints_table', 15),
 (35, '2024_10_16_164410_add_court_name_to_complaints_table', 16),
 (39, '2024_10_18_073602_add_victim_id_to_complaints_table', 17),
-(42, '2024_10_18_142356_convert_status_to_string_type_from_complaints_table', 18);
+(42, '2024_10_18_142356_convert_status_to_string_type_from_complaints_table', 18),
+(43, '2024_10_21_070327_update_complaints_table', 19);
 
 INSERT INTO `officers` (`id`, `complaint_id`, `name`, `rank`, `division`, `badge_number`, `created_at`, `updated_at`) VALUES
-(1, 1, 'defendant 1', NULL, NULL, 'case', '2024-10-18 07:45:11', '2024-10-18 07:45:11');
+(1, 1, 'defendant 1', NULL, NULL, 'case', '2024-10-18 07:45:11', '2024-10-18 07:45:11'),
+(2, 3, 'Maxine Good', NULL, NULL, NULL, '2024-10-21 07:09:18', '2024-10-21 07:09:18');
 
 INSERT INTO `states` (`id`, `name`, `abbreviation`, `created_at`, `updated_at`) VALUES
 (1, 'Alaska', 'AK', NULL, NULL),
@@ -45103,10 +45112,14 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `address`, `city`, `stat
 (22, 'test test', 'test1test@test.com', '$2y$12$h6d4q/kVZwQ.38sHx8lIp.YRERJ8jt.gqrsTslKyP4q23g12kNOfi', 'test', 'test', 'test', 'test', 'test', 'user', NULL, '2024-10-18 07:12:57', '2024-10-18 07:12:57'),
 (23, 'john eod', 'email@email.com', '$2y$12$OVXwuOqlwiVvlksiuH4Ds.Z0By6E9jFG204QAI.rwexnC8GKrxWMa', 'test', 'test', 'test', 'test', '123', 'user', NULL, '2024-10-18 07:40:20', '2024-10-18 07:40:20'),
 (24, 'john eod', 'email1@email.com', '$2y$12$c5kEDjE9ChZ1ziVfADy8BeqJ9KZL.efq0Le0THcjm9u4FIgGYDR2.', 'test', 'test', 'test', 'test', '123', 'user', NULL, '2024-10-18 07:41:37', '2024-10-18 07:41:37'),
-(25, 'case casecase', 'case@case.com', '$2y$12$QKLwvcBZ9GQPjBYvWd.0y.lYLmShmiCH/OCnhL5gJWVIwJos7JhZm', 'case', 'case', 'case', 'case', 'case', 'user', NULL, '2024-10-18 07:45:11', '2024-10-18 07:45:11');
+(25, 'case casecase', 'case@case.com', '$2y$12$QKLwvcBZ9GQPjBYvWd.0y.lYLmShmiCH/OCnhL5gJWVIwJos7JhZm', 'case', 'case', 'case', 'case', 'case', 'user', NULL, '2024-10-18 07:45:11', '2024-10-18 07:45:11'),
+(26, 'Jael Bass', 'mulafezem@mailinator.com', '$2y$12$jHH6L7H5lGEkNjD.fhywfOPck2YgABXwVpQAiooX1b2MRRNoIzVbq', 'Amet et in proident', 'Fugiat tempore con', 'Rerum dignissimos im', '37599', '8277581576', 'user', NULL, '2024-10-21 07:06:35', '2024-10-21 07:06:35'),
+(27, 'Jael Bass', 'mulafezem1@mailinator.com', '$2y$12$IWcA.YSsjn0XluFpOhfKHelEIetQeguT38YlMAoBgjzfpdFHjzgaC', 'Amet et in proident', 'Fugiat tempore con', 'Rerum dignissimos im', '37599', '8277581576', 'user', NULL, '2024-10-21 07:09:18', '2024-10-21 07:09:18'),
+(28, 'Kareem Gibson', 'witebov@mailinator.com', '$2y$12$bmp8xAH2yZK3z817CT7EeOOxU8o6RCX6kT87CjTSwoXT3wA9OOn6e', NULL, NULL, NULL, NULL, NULL, 'subadmin', NULL, '2024-10-21 07:52:46', '2024-10-21 07:52:46');
 
 INSERT INTO `witnesses` (`id`, `complaint_id`, `name`, `contact`, `email`, `created_at`, `updated_at`) VALUES
-(1, 1, 'barathrum', '322', NULL, '2024-10-18 07:45:11', '2024-10-18 07:45:11');
+(1, 1, 'barathrum', '322', NULL, '2024-10-18 07:45:11', '2024-10-18 07:45:11'),
+(2, 3, 'Colleen Robbins', '+1 (485) 944-9382', NULL, '2024-10-21 07:09:18', '2024-10-21 07:09:18');
 
 
 
