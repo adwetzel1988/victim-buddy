@@ -22,6 +22,11 @@ Route::get('/', function () {
     if (auth()->guest()) {
         return redirect()->route('login');
     }
+
+    if (auth()->user()->role !== 'admin') {
+        return redirect()->route('complaints.index');
+    }
+
     return view('welcome');
 });
 
