@@ -133,6 +133,11 @@ class ComplaintController extends Controller
 
     public function searchForm()
     {
+        // only allow admins to search
+        if (!auth()->guest() && auth()->user()->role !== 'admin') {
+            return redirect('/');
+        }
+
         return view('complaints.search');
     }
 

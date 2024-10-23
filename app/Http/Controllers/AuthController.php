@@ -25,6 +25,11 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
+            // if the user is an admin, redirect to the complaints.create
+            if (auth()->user()->role === 'admin') {
+                return redirect()->route('complaints.create');
+            }
+
             return redirect('/');
         }
 
